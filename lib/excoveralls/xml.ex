@@ -21,7 +21,8 @@ defmodule ExCoveralls.Xml do
   def generate_xml(stats, _options) do
     base_dir = Settings.get_xml_base_dir()
     "<coverage version=\"1\">" <> Enum.map_join(stats, fn %{name: name, coverage: coverage} ->
-      path = String.replace("#{base_dir}/#{name}", ~r/(\/)+/, "/", global: true)
+      path = if base_dir != "", do: "#{base_dir}/#{name}", else: name
+      path = String.replace(path, ~r/(\/)+/, "/", global: true)
       "<file path=\"#{path}\">" <>
         Enum.map_join(Enum.with_index(coverage), fn 
           {nil, _line} -> ""
