@@ -52,7 +52,14 @@ defmodule ExCoveralls do
   end
 
   def execute(options, compile_path) do
-    stats = Cover.modules() |> Stats.report() |> Enum.map(&Enum.into(&1, %{}))
+    stats = Cover.modules() 
+    |> Stats.report() 
+    |> Enum.map(&Enum.into(&1, %{}))
+    |> Enum.map(fn %{name: name} = stat ->
+      poncho_base_folder = System.get_env("PONCHO_BASE_FOLDER", "")
+      trimmed = Path.relative_to(name, poncho_base_folder)
+      %{stat | name: trimmed}
+    end)
 
     if options[:umbrella] do
       store_stats(stats, options, compile_path)
