@@ -15,6 +15,7 @@ Usage: mix coveralls <Options>
 
     -o (--output-dir)   Write coverage information to output dir.
     -u (--umbrella)     Show overall coverage for umbrella project.
+    -p (--poncho)     Show overall coverage for poncho project.
     -v (--verbose)      Show json string for posting.
 
 Usage: mix coveralls.detail [--filter file-name-pattern]

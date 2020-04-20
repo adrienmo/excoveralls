@@ -33,8 +33,8 @@ defmodule Mix.Tasks.Coveralls do
         message: "Please specify 'test_coverage: [tool: ExCoveralls]' in the 'project' section of mix.exs"
     end
 
-    switches = [filter: :string, umbrella: :boolean, verbose: :boolean, pro: :boolean, parallel: :boolean, sort: :string, output_dir: :string]
-    aliases = [f: :filter, u: :umbrella, v: :verbose, o: :output_dir]
+    switches = [filter: :string, poncho: :boolean, umbrella: :boolean, verbose: :boolean, pro: :boolean, parallel: :boolean, sort: :string, output_dir: :string]
+    aliases = [f: :filter, u: :umbrella, p: :poncho, v: :verbose, o: :output_dir]
     {args, common_options} = parse_common_options(args, switches: switches, aliases: aliases)
     all_options = options ++ common_options
     test_task = Mix.Project.config[:test_coverage][:test_task] || "test"
@@ -227,8 +227,8 @@ defmodule Mix.Tasks.Coveralls do
     @preferred_cli_env :test
 
     def run(args) do
-      switches = [filter: :string, umbrella: :boolean, verbose: :boolean, pro: :boolean, parallel: :boolean]
-      aliases = [f: :filter, u: :umbrella, v: :verbose]
+      switches = [filter: :string, umbrella: :boolean, poncho: :boolean, verbose: :boolean, pro: :boolean, parallel: :boolean]
+      aliases = [f: :filter, u: :umbrella, v: :verbose, p: :poncho]
       {remaining, options} = Mix.Tasks.Coveralls.parse_common_options(
         args,
         switches: switches ++ [sha: :string, token: :string, committer: :string, branch: :string, message: :string, name: :string],
@@ -245,6 +245,7 @@ defmodule Mix.Tasks.Coveralls do
           sha:          options[:sha] || "",
           message:      options[:message] || "[no commit message]",
           umbrella:     options[:umbrella],
+          poncho:       options[:poncho],
           verbose:      options[:verbose]
         ])
     end

@@ -33,9 +33,9 @@ defmodule ExCoveralls do
   This method will be called from mix to trigger coverage analysis.
   """
   def start(compile_path, _opts) do
-    poncho? = true
+    options = ConfServer.get()
 
-    compile_paths = if poncho? do
+    compile_paths = if options[:poncho] do
       base_compile_path = Path.expand(compile_path <> "../../..")
       Mix.Dep.cached() 
       |> Enum.filter(& is_nil(&1.opts[:lock])) 
@@ -46,20 +46,23 @@ defmodule ExCoveralls do
     end
 
     Cover.compile(compile_paths)
-    fn() ->
-      execute(ConfServer.get, compile_paths)
-    end
+    fn() -> execute(options, compile_paths) end
   end
 
   def execute(options, compile_path) do
     stats = Cover.modules() 
     |> Stats.report() 
     |> Enum.map(&Enum.into(&1, %{}))
-    |> Enum.map(fn %{name: name} = stat ->
-      poncho_base_folder = System.get_env("PONCHO_BASE_FOLDER", "")
-      trimmed = Path.relative_to(name, poncho_base_folder)
-      %{stat | name: trimmed}
-    end)
+
+    stats = if options[:poncho] do
+      Enum.map(stats, fn %{name: name} = stat ->
+        poncho_base_folder = System.get_env("PONCHO_BASE_FOLDER", "")
+        trimmed = Path.relative_to(name, poncho_base_folder)
+        %{stat | name: trimmed}
+      end)
+    else
+      stats
+    end
 
     if options[:umbrella] do
       store_stats(stats, options, compile_path)
