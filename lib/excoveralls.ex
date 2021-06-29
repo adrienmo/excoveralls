@@ -39,7 +39,7 @@ defmodule ExCoveralls do
       base_compile_path = Path.expand(compile_path <> "../../..")
       Mix.Dep.cached() 
       |> Enum.filter(& is_nil(&1.opts[:lock])) 
-      |> Enum.reject(&(&1.app in [:nex_protocol]))
+      |> Enum.reject(&(&1.app in [:nex_protocol, :matching_engine]))
       |> Enum.map(& "#{base_compile_path}/#{&1.app}/ebin")
       |> Kernel.++([compile_path])
     else
